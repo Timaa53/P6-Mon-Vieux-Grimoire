@@ -18,6 +18,13 @@ app.use((req, res, next) => {
 
 
 // ROUTES GET (bdd, id, rating)
+// ROUTE GET RATING
+app.get('/api/books/bestrating', (req, res) => {
+    Book.find().sort({ averageRating: -1 }).limit(3)
+    .then(books => res.status(200).json(books))
+    .catch(error => res.status(404).json({ error }));
+});
+
 // ROUTE GET BDD LIVRES
 app.get('/api/books', (req, res) => {
     Book.find()
@@ -32,12 +39,6 @@ app.get('/api/books/:id', (req, res) => {
     .catch(error => res.status(404).json({ error }));
 });
 
-// ROUTE GET RATING
-app.get('/api/books/bestrating', (req, res) => {
-    Book.find().sort({ averageRating: -1 }).limit(3)
-    .then(books => res.status(200).json(books))
-    .catch(error => res.status(404).json({ error }));
-});
 
 // ROUTES POST
 // ROUTE POST SIGNUP
