@@ -95,7 +95,10 @@ app.post('/api/books/:id/rating', (req, res) => {
 
 // ROUTE PUT
 app.put('/api/books/:id', (req, res) => {
-    Book.updateOne()
+    delete req.body._id
+    Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
+    .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+    .catch(error => res.status(400).json({ error }));
 });
 
 // ROUTE DELETE
