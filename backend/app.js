@@ -2,9 +2,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Book from './models/Books.js';
 
-mongoose.connect('mongodb+srv://Timalo:Andy53andy53.@cluster0.yhhqq2w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect('mongodb+srv://Timalo:Timalotest123@cluster0.yhhqq2w.mongodb.net/MonVieuxGrimoireBDD?retryWrites=true&w=majority&appName=Cluster0')
     .then(() => console.log('Connection à MongoDB réussie !'))
-    .catch(() => console.log('Connection à MongoDB échouée !'))
+    .catch((err) => console.log('❌ Connection à MongoDB échouée !', err.message))
 
 const app = express();
 app.use(express.json());
@@ -20,12 +20,16 @@ app.use((req, res, next) => {
 // ROUTES GET (bdd, id, rating)
 // ROUTE GET BDD LIVRES
 app.get('/api/books', (req, res) => {
-    res.json({ message: 'liste des livres' });
+    Book.find()
+    .then(books => res.status(200).json(books))
+    .catch(error => res.status(400).json({ error }));
 });
 
-// ROUTE GET ID USER
+// ROUTE GET ID LIVRE PRECIS
 app.get('/api/books/:id', (req, res) => {
-    res.json({ message: `id user : ${req.params.id}` });
+    Book.findOne({ _id: req.params.id }) 
+    .then(book => res.status(200).json(book))
+    .catch(error => res.status(404).json({ error }));
 });
 
 // ROUTE GET RATING
@@ -45,7 +49,7 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // ROUTE POST LIVRES
-app.post('/api/books', (req, res) => {
+app.post('/api/books', (req, res) => { // error 500
     delete req.body._id;
     const book = new Book({
         ...req.body
@@ -62,7 +66,7 @@ app.post('/api/books/:id/rating', (req, res) => {
 
 // ROUTE PUT
 app.put('/api/books/:id', (req, res) => {
-    res.json({ message: `Ajout book id : ${req.params.id}` });
+    Book.updateOne()
 });
 
 // ROUTE DELETE
