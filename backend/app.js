@@ -34,7 +34,9 @@ app.get('/api/books/:id', (req, res) => {
 
 // ROUTE GET RATING
 app.get('/api/books/bestrating', (req, res) => {
-    res.json({ message: 'notation' });
+    Book.find().sort({ averageRating: -1 }).limit(3)
+    .then(books => res.status(200).json(books))
+    .catch(error => res.status(404).json({ error }));
 });
 
 // ROUTES POST
