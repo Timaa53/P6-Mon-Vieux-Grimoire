@@ -34,7 +34,7 @@ app.get('/api/books', (req, res) => {
 
 // ROUTE GET ID LIVRE PRECIS
 app.get('/api/books/:id', (req, res) => {
-    Book.findOne({ _id: req.params.id }) 
+    Book.findOne({ _id: req.params.id })
     .then(book => res.status(200).json(book))
     .catch(error => res.status(404).json({ error }));
 });
@@ -64,7 +64,33 @@ app.post('/api/books', (req, res) => { // error 500
 
 // ROUTE POST RATING
 app.post('/api/books/:id/rating', (req, res) => {
-    res.json({ message: `id book : ${req.params.id} / route : rating` });
+    const { userId, rating } = req.body;
+    function validValueRating(value) {
+        return typeof value === 'number' && value >= 0 && value <= 5
+    };
+    if (!validValueRating(rating)) {
+        return res.status(400).json({ message: 'note invalide' })
+    };
+
+    Book.findOne({ _id: req.params.id })
+    .then(book => {
+        function isUserIdAlreadyKnown(userId) {
+            return book.ratings.some(rating => rating.userId === userId);
+        }
+        if (isUserIdAlreadyKnown(userId)) {
+            return res.status(400).json({ message: "l'utilisateur à déjà voté !" })
+        };
+        book.ratings.push({ userId, grade: rating });
+
+        const grades = book.ratings.map(rating => rating.grade);
+        const sum = grades.reduce((acc, val) => acc + val, 0);
+        const average = sum / grades.length;
+        book.averageRating = average;
+        book.save()
+            .then(updatedBook => res.status(201).json(updatedBook))
+            .catch(error => res.status(500).json({ error }));
+    })
+    .catch(error => res.status(404).json({ error }));
 });
 
 // ROUTE PUT
