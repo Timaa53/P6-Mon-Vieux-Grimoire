@@ -24,6 +24,7 @@ export const addBook = (req, res) => {
   delete req.body._id;
   const book = new Book({
     ...req.body,
+    userId: req.auth.userId // liaison livre-user
   });
   book.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
@@ -31,7 +32,8 @@ export const addBook = (req, res) => {
 };
 
 export const addRate = (req, res) => {
-  const { userId, rating } = req.body;
+  const userId = req.auth.userId; // sécurisation livre-user
+  const { rating } = req.body;
   function validValueRating(value) {
     return typeof value === 'number' && value >= 0 && value <= 5;
   }
@@ -60,15 +62,44 @@ export const addRate = (req, res) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// ROUTE PUT (livre)
+// ROUTE PUT (livre) a ajuster!!
 export const updateBook = (req, res) => {
-  delete req.body._id;
-  Book.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Objet modifié !' }))
+  Book.findOne({_id: req.params.id})
+  .then(book => {
+    if (!book) {
+        return res.status(404).json({ message: 'Livre non trouvé !' });
+    }
+
+    if(book.userId !== req.auth.userId) {
+        return res.status(403).json({ message: 'Modification refusée !' });
+    }
+
+    delete req.body._id;
+    Book.updateOne(
+      { _id: req.params.id },
+      { ...req.body, _id: req.params.id }
+    )
+    .then(() => res.status(200).json({ message: 'Livre modifié !' }))
     .catch((error) => res.status(400).json({ error }));
+  })
+  .catch((error) => res.status(500).json({ error }));
 };
 
-// ROUTE DELETE (livre)
+// ROUTE DELETE (livre) a ajuster!!
 export const deleteBook = (req, res) => {
-  res.json({ message: `Suppression book id : ${req.params.id}` });
+  Book.findOne({_id: req.params.id})
+  .then(book => {
+    if (!book) {
+        return res.status(404).json({ message: 'Livre non trouvé !' });
+    }
+
+    if(book.userId !== req.auth.userId) {
+        return res.status(403).json({ message: 'Suppression refusée !' });
+    }
+
+  Book.deleteOne({_id: req.params.id})
+  .then(() => res.status(200).json({ message: 'Livre supprimé !' }))
+  .catch(error => res.status(500).json({ error }));
+  })
+  .catch(error => res.status(500).json({ error }));
 };
