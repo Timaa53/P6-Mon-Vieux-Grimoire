@@ -1,17 +1,12 @@
 import express from 'express';
-// import Book from '../models/Books';
+import * as authCtrl from '../controllers/authController.js';
 
 const router = express.Router();
 
 // ROUTES POST
 // ROUTE POST SIGNUP
-router.post('/signup', (req, res) => {
-  res.json({ message: 'signup' });
-});
+router.post('/signup', authCtrl.signUp);
 // ROUTE POST LOGIN
-router.post('/login', (req, res) => {
-  res.json({ message: 'login' });
-});
+router.post('/login', authCtrl.login);
 
 export default router;
-// ///////////////ATTENTION ICI LA ROUTE EST /API/AUTH //////////////////////

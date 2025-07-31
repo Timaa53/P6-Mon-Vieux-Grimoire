@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 // Gestion routes
-app.use('/api/books', routesAuth);
+app.use('/api/auth', routesAuth);
 app.use('/api/books', routesBooks);
 
 export default app;
