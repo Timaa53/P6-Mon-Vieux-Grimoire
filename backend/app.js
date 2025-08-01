@@ -2,10 +2,15 @@ import express from 'express';
 import mongoose from 'mongoose';
 import routesAuth from './routes/auth.js';
 import routesBooks from './routes/booksRouter.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 mongoose.connect('mongodb+srv://Timalo:Timalotest123@cluster0.yhhqq2w.mongodb.net/MonVieuxGrimoireBDD?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => console.log('Connection à MongoDB réussie !'))
   .catch((err) => console.log('❌ Connection à MongoDB échouée !', err.message));
+
+const fileName = fileURLToPath(import.meta.url);
+const dirName = path.dirname(fileName);
 
 const app = express();
 app.use(express.json());
@@ -21,5 +26,6 @@ app.use((req, res, next) => {
 // Gestion routes
 app.use('/api/auth', routesAuth);
 app.use('/api/books', routesBooks);
+app.use('/images/BooksImages', express.static(path.join(dirName, 'images/BooksImages')));
 
 export default app;

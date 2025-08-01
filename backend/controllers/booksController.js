@@ -1,4 +1,5 @@
 import Book from '../models/Books.js';
+import fs from 'fs';
 
 // ROUTES GET (rating, bdd, id livre)
 export const bestRating = (req, res) => {
@@ -21,10 +22,14 @@ export const getOneBook = (req, res) => {
 
 // ROUTES POST (livre, rating)
 export const addBook = (req, res) => {
-  delete req.body._id;
+    const bookObject = JSON.parse(req.body.book);
+    delete bookObject._id;
+    delete bookObject._userId;
+
   const book = new Book({
-    ...req.body,
-    userId: req.auth.userId // liaison livre-user
+    ...bookObject,
+    userId: req.auth.userId, // liaison livre-user
+    imageUrl: `${req.protocol}://${req.get('host')}/images/BooksImages/${req.file.filename}`
   });
   book.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
@@ -62,27 +67,45 @@ export const addRate = (req, res) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// ROUTE PUT (livre) a ajuster!!
+// ROUTE PUT (livre)
 export const updateBook = (req, res) => {
-  Book.findOne({_id: req.params.id})
-  .then(book => {
-    if (!book) {
-        return res.status(404).json({ message: 'Livre non trouvé !' });
-    }
+    const bookObject = req.file? {
+        ...JSON.parse(req.body.book),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/BooksImages/${req.file.filename}`
+    } : { ...req.body };
 
-    if(book.userId !== req.auth.userId) {
-        return res.status(403).json({ message: 'Modification refusée !' });
-    }
+    delete bookObject._userId;
+    Book.findOne({_id: req.params.id})
+    .then(book => {
+        if (!book) {
+            return res.status(404).json({ message: 'Livre non trouvé !' });
+        }
 
-    delete req.body._id;
-    Book.updateOne(
-      { _id: req.params.id },
-      { ...req.body, _id: req.params.id }
-    )
-    .then(() => res.status(200).json({ message: 'Livre modifié !' }))
-    .catch((error) => res.status(400).json({ error }));
-  })
-  .catch((error) => res.status(500).json({ error }));
+        if(book.userId !== req.auth.userId) {
+            return res.status(403).json({ message: 'Modification refusée !' });
+        }
+
+        delete req.body._id;
+        if(req.file) {
+        const filename = book.imageUrl.split('/images/BooksImages/')[1];
+        fs.unlink(`images/BooksImages/${filename}`, () => {
+            Book.updateOne(
+                { _id: req.params.id },
+                { ...bookObject, _id: req.params.id }
+            )
+            .then(() => res.status(200).json({ message: 'Livre modifié !' }))
+            .catch((error) => res.status(400).json({ error }));
+        });
+        return
+        }
+        return Book.updateOne(
+            { _id: req.params.id },
+            { ...bookObject, _id: req.params.id }
+        )
+        .then(() => res.status(200).json({ message: 'Livre modifié !' }))
+        .catch((error) => res.status(400).json({ error }));
+    })
+    .catch((error) => res.status(500).json({ error }));
 };
 
 // ROUTE DELETE (livre) a ajuster!!
@@ -97,9 +120,12 @@ export const deleteBook = (req, res) => {
         return res.status(403).json({ message: 'Suppression refusée !' });
     }
 
-  Book.deleteOne({_id: req.params.id})
-  .then(() => res.status(200).json({ message: 'Livre supprimé !' }))
-  .catch(error => res.status(500).json({ error }));
+    const filename = book.imageUrl.split('/images/BooksImages/')[1];
+    fs.unlink(`images/BooksImages/${filename}`, () => {
+        Book.deleteOne({_id: req.params.id})
+        .then(() => res.status(200).json({ message: 'Livre supprimé !' }))
+        .catch(error => res.status(500).json({ error }));
+    });
   })
   .catch(error => res.status(500).json({ error }));
 };
