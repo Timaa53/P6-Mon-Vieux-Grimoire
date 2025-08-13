@@ -52,7 +52,7 @@ export const addRate = (req, res) => {
         return book.ratings.some((rating) => rating.userId === userId);
       }
       if (isUserIdAlreadyKnown(userId)) {
-        return res.status(400).json({ message: 'l\'utilisateur à déjà voté !' });
+        return res.status(400).json({ message: "l'utilisateur à déjà voté !" });
       }
       book.ratings.push({ userId, grade: rating });
 

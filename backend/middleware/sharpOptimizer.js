@@ -1,6 +1,6 @@
 import { optimizeImage } from '../utils/optimizeImage.js';
 
-export const sharpOptimizer = async(req, res, next) => {
+export const sharpOptimizer = async (req, res, next) => {
     if (!req.file)
         return next();
 

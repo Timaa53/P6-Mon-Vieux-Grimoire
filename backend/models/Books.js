@@ -9,7 +9,7 @@ const booksSchema = new Schema({
   imageUrl: { type: String, required: true },
   year: { type: Number, required: true },
   genre: { type: String, required: true },
-  ratings: [{
+  ratings: [{ // le tableau général des notes du livre concerné est ici
     userId: { type: String, required: true },
     grade: { type: Number, required: true },
   }],

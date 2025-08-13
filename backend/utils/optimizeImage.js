@@ -8,7 +8,7 @@ export const optimizeImage = async (buffer, originalName) => {
     const outputPath = path.join(folder, filename);
 
     await sharp(buffer)
-    .resize({ width: 260 })
+    .resize(206, 260)
     .webp({ quality: 80 })
     .toFile(outputPath);
 

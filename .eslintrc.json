@@ -1,7 +1,9 @@
 {
+  "root": true,
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "node": true
   },
   "extends": [
     "plugin:react/recommended",
@@ -12,22 +14,41 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react"],
   "rules": {
-    "import/extensions": ["error", "ignorePackages", {
-      "js": "never",
-      "jsx": "never"
-    }],
+    "no-unused-vars": "off",
+    "no-console": "off",
+    "curly": "off",
+    "nonblock-statement-body-position": "off",
+    "eol-last": "off",
+    "import/no-extraneous-dependencies": "off",
+    "linebreak-style": "off",
+    "import/extensions": "off",
+    "import/order": "off",
     "import/prefer-default-export": "off",
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "indent": "off",
+
+    "comma-dangle": "off",
+    "consistent-return": "off",
+    "prefer-destructuring": "off",
+    "no-shadow": "off",
+    "no-param-reassign": "off",
+    "space-infix-ops": "off",
+    "object-curly-spacing": "off",
+    "arrow-parens": "off",
+    "keyword-spacing": "off",
+    "semi": "off",
+    "no-multiple-empty-lines": "off",
+
+    "no-underscore-dangle": ["error", {
+      "allow": ["_id", "_userId"],
+      "allowAfterThis": true,
+      "allowFunctionParams": true
+    }]
   },
   "settings": {
     "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx"]
-      }
+      "node": { "extensions": [".js", ".jsx"] }
     }
   }
 }
