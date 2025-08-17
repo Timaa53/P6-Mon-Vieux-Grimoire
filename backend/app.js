@@ -4,8 +4,10 @@ import routesAuth from './routes/auth.js';
 import routesBooks from './routes/booksRouter.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-mongoose.connect('mongodb+srv://Timalo:Timalotest123@cluster0.yhhqq2w.mongodb.net/MonVieuxGrimoireBDD?retryWrites=true&w=majority&appName=Cluster0')
+dotenv.config();
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connection à MongoDB réussie !'))
   .catch((err) => console.log('❌ Connection à MongoDB échouée !', err.message));
 

@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 /.idea
+
+# Environment variables
+.env
+
 # testing
 /coverage
 

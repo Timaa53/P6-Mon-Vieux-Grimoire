@@ -56,7 +56,7 @@ export const addRate = (req, res) => {
       }
       book.ratings.push({ userId, grade: rating });
 
-      const grades = book.ratings.map((rating) => rating.grade);
+      const grades = book.ratings.map((rating) => rating.grade); // calcul moyenne
       const sum = grades.reduce((acc, val) => acc + val, 0);
       const average = sum / grades.length;
       book.averageRating = average;
@@ -88,7 +88,7 @@ export const updateBook = (req, res) => {
         delete req.body._id;
         if(req.file) {
         const filename = book.imageUrl.split('/images/BooksImages/')[1];
-        fs.unlink(`images/BooksImages/${filename}`, () => {
+        fs.unlink(`images/BooksImages/${filename}`, () => { // suppression physique de l'image dans booksImages
             Book.updateOne(
                 { _id: req.params.id },
                 { ...bookObject, _id: req.params.id }
@@ -108,7 +108,7 @@ export const updateBook = (req, res) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-// ROUTE DELETE (livre) a ajuster!!
+// ROUTE DELETE (livre)
 export const deleteBook = (req, res) => {
   Book.findOne({_id: req.params.id})
   .then(book => {
@@ -121,7 +121,7 @@ export const deleteBook = (req, res) => {
     }
 
     const filename = book.imageUrl.split('/images/BooksImages/')[1];
-    fs.unlink(`images/BooksImages/${filename}`, () => {
+    fs.unlink(`images/BooksImages/${filename}`, () => { // suppression physique de l'image dans booksImages
         Book.deleteOne({_id: req.params.id})
         .then(() => res.status(200).json({ message: 'Livre supprimé !' }))
         .catch(error => res.status(500).json({ error }));
