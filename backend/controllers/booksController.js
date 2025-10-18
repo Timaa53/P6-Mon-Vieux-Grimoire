@@ -26,10 +26,12 @@ export const addBook = (req, res) => {
     delete bookObject._id;
     delete bookObject._userId;
 
+    const BASE_URL = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
+
   const book = new Book({
     ...bookObject,
     userId: req.auth.userId, // liaison livre-user
-    imageUrl: `${req.protocol}://${req.get('host')}/images/BooksImages/${req.file.filename}`
+    imageUrl: `${BASE_URL}/images/BooksImages/${req.file.filename}`,
   });
   book.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
@@ -69,9 +71,11 @@ export const addRate = (req, res) => {
 
 // ROUTE PUT (livre)
 export const updateBook = (req, res) => {
+    const BASE_URL = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
+
     const bookObject = req.file? {
         ...JSON.parse(req.body.book),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/BooksImages/${req.file.filename}`
+        imageUrl: `${BASE_URL}/images/BooksImages/${req.file.filename}`,
     } : { ...req.body };
 
     delete bookObject._userId;
