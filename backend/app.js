@@ -17,6 +17,11 @@ const dirName = path.dirname(fileName);
 const app = express();
 app.use(express.json());
 
+// Route health pour uptimeRobot
+app.get('/health', (req, res) {
+    res.status(200).send('OK');
+});
+
 // Gestion CORS
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
