@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 
 // Route health pour uptimeRobot
-app.get('/health', (req, res) {
+app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
 
